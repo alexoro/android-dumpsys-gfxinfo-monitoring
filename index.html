@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Line Chart</title>
+		<script src="./Chart.js"></script>
+		<meta name = "viewport" content = "initial-scale = 1, user-scalable = no">
+		<style>
+			canvas{
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas" height="450" width="1400"></canvas>
+		<br/>
+		
+		<textarea id="data" cols=60 rows=10></textarea>
+		<input type="button" value="Build" onclick="process();" />
+		
+	<script>
+	String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g, '');};
+
+	
+	function drawChart(labels, draw, process, execute) {
+		var lineChartData = {
+			labels : labels,
+			datasets : [
+				{
+					fillColor : "rgba(51,102,204,0.5)",
+					data : draw
+				},
+				{
+					fillColor : "rgba(220,57,18,0.5)",
+					data : process
+				},
+				{
+					fillColor : "rgba(255,153,0,0.5)",
+					data : execute
+				}
+			]
+
+		}
+		var myLine = new Chart(document.getElementById("canvas").getContext("2d")).Bar(lineChartData);
+	}
+	
+	
+	function process() {
+		var value = document.getElementById("data").value;
+		lines = value.split("\n");
+		
+		var labels = [];
+		var draw = [];
+		var process = [];
+		var execute = [];
+		
+		for (i = 0, k = 0; i < lines.length; i++) {
+			if (lines[i].trim() == '') {
+				continue;
+			} else {
+				k++;
+				items = lines[i].trim().split("\t");
+				console.log(items);
+				labels.push(k);
+				draw.push(parseFloat(items[0]));
+				process.push(parseFloat(items[1]));
+				execute.push(parseFloat(items[2]));
+			}
+		}
+		
+		drawChart(labels, draw, process, execute);
+		
+		var avgDraw = 0;
+		var avgProcess = 0;
+		var avgExecute = 0;
+		for (i = 0; i < labels.length; i++) {
+			avgDraw += draw[i];
+			avgProcess += process[i];
+			avgExecute += execute[i];
+		}
+		avgDraw /= labels.length;
+		avgProcess /= labels.length;
+		avgExecute /= labels.length;
+		var avgPerFrame = avgDraw + avgProcess + avgExecute;
+		var fps = 16*60/avgPerFrame;
+		
+		document.getElementById("data").value = "Draw: " + avgDraw + " ms\nProcess: " + avgProcess + " ms\nExecute: " + avgExecute + " ms\nPer frame: " + avgPerFrame + " ms\nFPS: " + fps + " (OK is 60)";
+	};
+	
+		/*var lineChartData = {
+			qlabels : ["January","February","March","April","May","June","July"],
+			datasets : [
+				{
+					fillColor : "rgba(51,102,204,0.5)",
+					data : [65,59,90,81,56,55,40]
+				},
+				{
+					fillColor : "rgba(220,57,18,0.5)",
+					data : [28,48,40,19,96,27,100]
+				},
+				{
+					fillColor : "rgba(255,153,0,0.5)",
+					data : [28,48,40,19,96,27,100]
+				}
+			]
+
+		}
+
+	var myLine = new Chart(document.getElementById("canvas").getContext("2d")).Bar(lineChartData);*/
+
+	</script>
+	</body>
+</html>
