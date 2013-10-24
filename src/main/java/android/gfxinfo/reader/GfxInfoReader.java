@@ -16,10 +16,16 @@ import java.util.regex.Pattern;
  */
 public class GfxInfoReader {
 
-    public Dump read(String deviceId, String appPackage) throws IOException, ParseException {
-        String cmd = String.format(
-                "adb shell dumpsys gfxinfo %s",
-                appPackage);
+    private String mDeviceId;
+    private String mAppPackage;
+
+    public GfxInfoReader(String deviceId, String appPackage) {
+        mDeviceId = deviceId;
+        mAppPackage = appPackage;
+    }
+
+    public Dump read() throws IOException, ParseException {
+        String cmd = String.format("adb shell dumpsys gfxinfo %s", mAppPackage);
 
         InputStream is = Runtime.getRuntime().exec(cmd).getInputStream();
         String body = readFromStream(is);
